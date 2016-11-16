@@ -1,0 +1,14 @@
+obj/
+nonpareil.conf
+.sconsign.dblite
+build/common/
+build/posix/
+image/11c.png
+image/11c_base.pnm
+image/12c.png
+image/12c_base.pnm
+image/15c.png
+image/15c_base.pnm
+image/16c.png
+image/16c_base.pnm
+image/voyager_segments.pnm

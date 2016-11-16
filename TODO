@@ -1,0 +1,196 @@
+TODO list for Nonpareil
+Copyright 1995, 2003, 2004, 2005 Eric L. Smith <eric@brouhaha.com>
+$Id: TODO 817 2005-06-20 10:03:59Z eric $
+
+
+Build process:
+
+  Create an RPM .spec file.
+
+    Should meet Fedora RPM guidelines:
+    http://fedora.redhat.com/participate/developers-guide/ch-rpm-building.html
+
+    "scons dist" should create the nonpareil.spec
+    file from a template, so that "rpmbuild -tb" will work with the release
+    tarball.
+
+
+User interface:
+
+  Startup:
+      Save path of KML file in state save file.
+      Allow starting Nonpareil with state save file as command line argument.
+      If no command line argument, provide dialog for user to choose
+      calculator.
+
+  Printer
+      should mode switch be a menu?
+      plug/unplug (load/unload module)
+      power switch?
+      handle closing window, provide way to reopen
+      start "tape" at bottom of window
+      more "save as" types (text, multi-column PDF?)
+      signal out-of-paper when scroll buffer is full
+      menu item to install fresh paper
+
+  Replace use of GtkItemFactory (deprecated) with GTKUIManager?
+
+  Visual improvements
+      slide switches
+      keyboard button hilighting
+
+  Implement edit menu commands:
+      Edit - Copy, Paste
+
+  Add ability to read kml, image, microcode from zip file.
+      GSF: http://www.gnome.org/projects/libgsf/
+          examples in CVS: http://cvs.gnome.org/viewcvs/libgsf/tests/
+	  use a GdkPixbufLoader instead of gdk_pixbuf_new_from_file().
+      On Windows, build ZIP into .EXE similar to a self-extractor?
+
+  Transparency/shape: improve support for moving window: add KML
+  syntax to specify keyboard rectangle, and use only region outside
+  rectangle for dragging.
+
+  Improve keyboard support:
+      Release key when focus is lost.
+
+  Add help.
+
+  Create an icon.
+
+  Create a fancier About box.  Use GtkAboutDialog, which allows for
+  clickable website URLs and email addresses, license window, etc.
+
+  Extract comments from image file and include in About box.  PNG
+  comment keywords to use:
+      Author
+      Title
+      Description
+      Copyright
+      Disclaimer
+      Warning
+      URL (unofficial)
+  Unfortunately getting the comments will require the file to be
+  read twice, once by gdk_pixbuf_new_from_file(), and once by direct
+  calls to libpng, libjpeg, etc.  Update: maybe can do parallel
+  parsing on the fly, by reading the file myself and passing the
+  data into a GdkPixbufLoader.
+
+
+Internals:
+
+  Display improvements:
+     Change Classic and Woodstock to use display "chip".
+ 
+     Eliminate dedicated display callback and initialization args to
+     sim_init() by using generic chip interface infrastructure.
+
+     Sim thread:
+         Use io_count, etc. to improve display update timing.  (done in Nut.)
+         Only send display update message to GUI thread if display has changed.
+
+    Increase display update performance
+
+      Pre-render digits/characters (compositing of segments) to increase
+      display update performance.  Need 2**9 segment combinations for
+      Voyager, 2**9 character/punctuation combinations for Coconut.  Note
+      that this will require Coconut code to pass character code to GUI
+      rather than segment map.
+
+      Push pre-rendered digits/characters to X server (optional?) using
+      GDK pixmaps.  Create offscreen pixmap from pixbuf with
+      gdk_draw_pixbuf().  Use gdk_draw_drawable() to blit to display.
+
+  Change Phineas to store vars in binary, convert to BCD only for
+      Nut read/write instructions
+
+  Split proc.c into separate GUI thread and simulator thread portions.
+
+  Create new XML-based ROM file format.
+
+  Complete the support for -41C .mod files
+
+  New memory API.
+
+  Move more of the simulator initialization into the simulator thread.
+
+  In csim.c, allow for multiple calculator instances.
+
+  Use more of glib:
+
+      file handling: g_build_filename(), g_stat()
+
+      memory allocation/deallocation
+
+      commandline option parser (g_option_xxx functions).  (glib 2.6)
+
+  Add code to remove async queue g_source when simulator thread exits.
+
+
+KML:
+
+  It would be nice to use a pure parser for KML, pass in the kml_t
+  pointer as input, and return it from read_kml_file().  But Flex
+  doesn't yet seem to have support for the Bison pure_parser option.
+  There exist patches, but I don't want to make people use those.
+  Better to wait for a production release of Flex.
+
+  Use XML files instead of KML?  (.nml?)
+
+
+Assembler:
+
+  Clean up memory usage of symbols in CASM
+
+  Implement symbol cross-reference in CASM
+
+
+Disassembler:
+
+  Add disassembler for Classic processors.
+
+  Make disassembler talk to sim thread rather than passing in two
+  words as parameters.
+
+
+Debugger:
+
+  Make the register and memory windows update, and make changes get
+  written back.  Disable editing (and grey out?) while running.
+
+  Add debugger commands.  Pass dbt_t as arg to commands.
+
+  Create new VTE patch based on feedback from Nalin.
+
+  Change Tcl standard I/O streams to use pty file descriptor.
+
+  Implement async queue based functions needed by debugger.
+
+
+Better model support:
+
+  Complete 41C Phineas (timer chip in Time Module/41CX).  Make stopwatch work
+      (TESTB mode?)
+
+  Add 41C HEPAX support.
+
+  Scan images at uniform scale and without JPEG compression.
+
+  Dump actual ROMs:
+      Classic:    HP-45, HP-55, HP-65, HP-70, HP-80
+      Classic/printing:  HP-46, HP-81, HP 9805A
+      Woodstock:  HP-22, HP-27, HP-29C
+      Topcat:     HP-91, HP-92, HP-95C, HP-97
+      Sting:      HP-10, HP-19C
+      Spice:      HP-31E, HP-33E
+      Cricket:    HP-01
+
+  Compare actual HP-45, HP-55, and HP-80 ROMs to CASM output.
+
+  Add Woodstock microinstructions for card reader (HP-67, HP-97)
+
+  Add Woodstock microinstructions for printer (HP-19C, HP-91, HP-92, HP-95C, HP-97)
+
+  Add HP-65 microinstructions for program memory access.
+
