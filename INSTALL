@@ -20,14 +20,17 @@ build it with a non-GNU toolchain.
     Python		1.5.2		2.3.4
     NetPBM				10.25
 
--------- Notes on building for Ubuntu 16.10. From this nonpareil directory:
+-------- Notes on building for Ubuntu 16 or 17.
+	 From this nonpareil directory:
 	 - sudo apt install scons flex bison gtk+-2.0 netpbm libxml2-dev libsdl1.2-dev zlib1g-dev libgtk2.0-dev gnome-panel
 	 - sudo scons install   # this command both builds and installs nonpareil to /usr/local/bin
 	 - copy the supplied HP12C_Ubuntu_icon.png to your ~/.local/share/applications
 	 - create an icon for Ubuntu Unity using the command: gnome-desktop-item-edit --create-new ~/.local/share/applications/HP12C.desktop
 	   - click the default application icon and change it by browsing to ~/.local/share/applications/HP12C_Ubuntu_icon.png
+	   - in the Name box, give the app a name such as: HP-12C
 	   - in the Command box, specify the model of HP calculator to launch. For example: /usr/local/bin/nonpareil 12c
-	 - using 'Files', drag the HP12C desktop icon from .local/share/applications to your launcher panel
+	 - launch the app from the .local/share/applications/HP12C.desktop icon
+	 - optional: see if you can figure out how to save it to your favourites, as a launchable icon. I couldn't :(
 --------
 
 In addition, the libraries and header files for the runtime dependencies
