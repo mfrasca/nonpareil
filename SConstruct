@@ -269,9 +269,10 @@ if (env['host'] != env['target']):
 # Windows DLLs
 #-----------------------------------------------------------------------------
 
-SConscript('win32/dll/SConscript',
-           build_dir='build/win32/dll',
-           duplicate=0)
+if env['target'] == 'win32':
+    SConscript('win32/dll/SConscript',
+               build_dir='build/win32/dll',
+               duplicate=0)
 
 #-----------------------------------------------------------------------------
 # documentation
