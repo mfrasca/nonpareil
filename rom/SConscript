@@ -24,14 +24,14 @@ Import('env source_release_dir snapshot_dir')
 # Install firmware files
 #-----------------------------------------------------------------------------
 
-roms = Split ("""21.obj 25.obj
-                 32e.obj 33c.obj 34c.obj 37e.obj 38c.obj 38e.obj
-                 41cv.mod 41cx.mod 82143a.mod 82182a.mod
-                 11c.obj 12c.obj 15c.obj 16c.obj""")
+roms = Split("""21.obj 25.obj
+                32e.obj 33c.obj 34c.obj 37e.obj 38c.obj 38e.obj
+                41cv.mod 41cx.mod 82143a.mod 82182a.mod
+                11c.obj 12c.obj 15c.obj 16c.obj""")
 
-env.Alias (target = 'install',
-           source = env.Install (dir = env ['destdir'] + env ['libdir'],
-                                 source = roms))
+env.Alias(target = 'install',
+          source = env.Install (dir = env['destdir'] + env['libdir'],
+                                source = roms))
 
 #-----------------------------------------------------------------------------
 # source tarball
@@ -39,14 +39,14 @@ env.Alias (target = 'install',
 
 dist_files = ['SConscript'] + roms
 
-env.Distribute (source_release_dir, dist_files)
+env.Distribute(source_release_dir, dist_files)
                 
-env.Distribute (snapshot_dir, dist_files)
+env.Distribute(snapshot_dir, dist_files)
 
 #-----------------------------------------------------------------------------
 # Windows distribution ZIP file
 #-----------------------------------------------------------------------------
 
-if env ['target'] == 'win32':
-    Import ('win32_bin_dist_dir')
-    Install (win32_bin_dist_dir, roms)
+if env['target'] == 'win32':
+    Import('win32_bin_dist_dir')
+    Install(win32_bin_dist_dir, roms)

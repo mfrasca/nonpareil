@@ -41,11 +41,11 @@ segment_images = voyager_segment_image  # some day there may be others
 # convert PNG files to PNM for manipulation
 #-----------------------------------------------------------------------------
 
-PNG2PNM = Builder(action = "pngtopnm $SOURCE >$TARGET",
-                   suffix = ".pnm",
-                   src_suffix = ".png")
+PNG2PNM = Builder(action="pngtopnm $SOURCE >$TARGET",
+                  suffix=".pnm",
+                  src_suffix=".png")
 
-env.Append(BUILDERS = { 'PNG2PNM' : PNG2PNM })
+env.Append(BUILDERS={'PNG2PNM': PNG2PNM})
 
 voyager_pnm_images = [env.PNG2PNM(src) for src in voyager_base_images]
 
@@ -61,12 +61,12 @@ def VPNM2PNG_Emitter(target, source, env):
     source.append(voyager_segment_pnm)
     return (target, source)
 
-VPNM2PNG = Builder(action = "pnmcat -lr $SOURCES | pnmtopng -compression 9 >$TARGET",
-                   suffix = ".png",
-                   src_suffix = "_base.pnm",
-                   emitter = VPNM2PNG_Emitter)
+VPNM2PNG = Builder(action="pnmcat -lr $SOURCES | pnmtopng -compression 9 >$TARGET",
+                   suffix=".png",
+                   src_suffix="_base.pnm",
+                   emitter=VPNM2PNG_Emitter)
 
-vimg_env.Append(BUILDERS = { 'VPNM2PNG' : VPNM2PNG })
+vimg_env.Append(BUILDERS={'VPNM2PNG': VPNM2PNG})
 
 
 derived_images = [vimg_env.VPNM2PNG(src) for src in voyager_pnm_images]
@@ -75,7 +75,7 @@ derived_images = [vimg_env.VPNM2PNG(src) for src in voyager_pnm_images]
 # Export 41CV image for use in building Nonpareil executable
 #-----------------------------------------------------------------------------
 
-env.Append(IMAGE_41CV = File('41cv.png'))
+env.Append(IMAGE_41CV=File('41cv.png'))
 
 #-----------------------------------------------------------------------------
 # Default targets
@@ -87,9 +87,9 @@ Default(derived_images)
 # Install image files
 #-----------------------------------------------------------------------------
 
-env.Alias(target = 'install',
-           source = env.Install(dir = env ['destdir'] + env ['libdir'],
-                                 source = unmod_images + derived_images))
+env.Alias(target='install',
+          source=env.Install(dir=env ['destdir'] + env ['libdir'],
+                             source=unmod_images + derived_images))
 
 #-----------------------------------------------------------------------------
 # source tarball

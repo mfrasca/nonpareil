@@ -24,15 +24,15 @@ Import('env source_release_dir snapshot_dir')
 # Assemble ROM sources
 #-----------------------------------------------------------------------------
 
-asm_srcs = Split ("""35.asm 45.asm 55.asm 80.asm""")
+asm_srcs = Split("""35.asm 45.asm 55.asm 80.asm""")
 
 asm_objs = [env.Assemble(src) for src in asm_srcs]
 
-Default (asm_objs)
+Default(asm_objs)
 
-env.Alias (target = 'install',
-           source = env.Install (dir = env ['destdir'] + env ['libdir'],
-                                 source = asm_objs))
+env.Alias(target='install',
+          source=env.Install(dir=env['destdir'] + env['libdir'],
+                             source=asm_objs))
 
 #-----------------------------------------------------------------------------
 # source tarball
@@ -40,14 +40,14 @@ env.Alias (target = 'install',
 
 dist_files = ['SConscript'] + asm_srcs
 
-env.Distribute (source_release_dir, dist_files)
+env.Distribute(source_release_dir, dist_files)
 
-env.Distribute (snapshot_dir, dist_files)
+env.Distribute(snapshot_dir, dist_files)
 
 #-----------------------------------------------------------------------------
 # Windows distribution ZIP file
 #-----------------------------------------------------------------------------
 
-if env ['target'] == 'win32':
-    Import ('win32_bin_dist_dir')
-    Install (win32_bin_dist_dir, asm_objs)
+if env['target'] == 'win32':
+    Import('win32_bin_dist_dir')
+    Install(win32_bin_dist_dir, asm_objs)

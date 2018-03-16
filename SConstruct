@@ -227,9 +227,9 @@ Export('env source_release_dir snapshot_dir')
 #-----------------------------------------------------------------------------
 
 SConscript(['rom/SConscript',
-             'kml/SConscript',
-             'image/SConscript',
-             'sound/SConscript'])
+            'kml/SConscript',
+            'image/SConscript',
+            'sound/SConscript'])
 
 #-----------------------------------------------------------------------------
 # host platform code

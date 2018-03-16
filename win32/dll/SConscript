@@ -37,11 +37,11 @@ def unzip_action(target, source, env):
     zf.close()
     return 1   # error - target wasn't found
 
-UNZIP = Builder(action = unzip_action,
-                suffix = '.dll',
-                src_suffix = 'zip')
+UNZIP = Builder(action=unzip_action,
+                suffix='.dll',
+                src_suffix='zip')
 
-env.Append(BUILDERS = { 'UNZIP': UNZIP })
+env.Append(BUILDERS={ 'UNZIP': UNZIP })
 
 #-----------------------------------------------------------------------------
 # Win32 DLLs

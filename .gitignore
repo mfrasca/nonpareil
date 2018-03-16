@@ -1,4 +1,6 @@
 obj/
+build/
+tgz/
 nonpareil.conf
 .sconsign.dblite
 build/common/

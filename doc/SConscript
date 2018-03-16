@@ -24,7 +24,7 @@ Import('env source_release_dir snapshot_dir')
 # Install image files
 #-----------------------------------------------------------------------------
 
-diagrams = Split ("""hla.dia keyboard_fsm.dia""")
+diagrams = Split("""hla.dia keyboard_fsm.dia""")
 
 
 #-----------------------------------------------------------------------------
@@ -33,6 +33,6 @@ diagrams = Split ("""hla.dia keyboard_fsm.dia""")
 
 dist_files = ['SConscript'] + diagrams
 
-env.Distribute (source_release_dir, dist_files)
+env.Distribute(source_release_dir, dist_files)
 
-env.Distribute (snapshot_dir, dist_files)
+env.Distribute(snapshot_dir, dist_files)
