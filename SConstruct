@@ -238,7 +238,7 @@ SConscript(['rom/SConscript',
 native_env = env.Clone()
 native_env['build_target_only'] = 0
 SConscript('src/SConscript',
-           build_dir='build/' + env['host'],
+           variant_dir='build/' + env['host'],
            duplicate=0,
            exports={'build_env': native_env,
                     'native_env': env})
@@ -248,7 +248,7 @@ SConscript('src/SConscript',
 #-----------------------------------------------------------------------------
 
 SConscript('asm/SConscript',
-           build_dir='obj',
+           variant_dir='obj',
            duplicate=0)
 
 #-----------------------------------------------------------------------------
@@ -260,7 +260,7 @@ if (env['host'] != env['target']):
     cross_build_env = env.Clone()
     cross_build_env['build_target_only'] = 1
     SConscript('src/SConscript',
-                build_dir='build/' + env['target'],
+                variant_dir='build/' + env['target'],
                 duplicate=0,
                 exports={'build_env': cross_build_env,
                          'native_env': env})
@@ -271,7 +271,7 @@ if (env['host'] != env['target']):
 
 if env['target'] == 'win32':
     SConscript('win32/dll/SConscript',
-               build_dir='build/win32/dll',
+               variant_dir='build/win32/dll',
                duplicate=0)
 
 #-----------------------------------------------------------------------------
