@@ -27,59 +27,59 @@ conf_file = 'nonpareil.conf'
 # Options
 #-----------------------------------------------------------------------------
 
-opts = Options(conf_file)
+opts = Variables(conf_file)
 
-opts.AddOptions(EnumOption('host',
-                           help='host build platform',
-                           allowed_values=('posix', 'win32'),
-                           default='posix',
-                           ignorecase=1),
+opts.AddVariables(EnumVariable('host',
+                               help='host build platform',
+                               allowed_values=('posix', 'win32'),
+                               default='posix',
+                               ignorecase=1),
 
-                EnumOption('target',
-                           help='execution target platform',
-                           allowed_values=('posix', 'win32'),
-                           default='posix',
-                           ignorecase=1),
+                  EnumVariable('target',
+                               help='execution target platform',
+                               allowed_values=('posix', 'win32'),
+                               default='posix',
+                               ignorecase=1),
 
-                PathOption('prefix',
-                           'installation path prefix',
-                           '/usr/local'),
+                  PathVariable('prefix',
+                               'installation path prefix',
+                               '/usr/local'),
 
-                # Don't use PathOption for other paths, because we don't
-                # require the directories to preexist.
-                ('bindir',
-                 'path for executable files (default is $prefix/bin)',
-                 ''),
+                  # Don't use PathOption for other paths, because we don't
+                  # require the directories to preexist.
+                  ('bindir',
+                   'path for executable files (default is $prefix/bin)',
+                   ''),
 
-                ('libdir',
-                 'path for library files (default is $prefix/lib/nonpareil)',
-                 ''),
+                  ('libdir',
+                   'path for library files (default is $prefix/lib/nonpareil)',
+                   ''),
 
-                ('destdir',
-                 'installation virtual root directory (for packaging)',
-                 ''),
+                  ('destdir',
+                   'installation virtual root directory (for packaging)',
+                   ''),
 
-                BoolOption('debug',
-                           help='compile for debugging',
-                           default=1),
+                  BoolVariable('debug',
+                               help='compile for debugging',
+                               default=1),
 
-                # Feature switches:
+                  # Feature switches:
 
-                BoolOption('has_debugger_gui',
-                           help='enable debugger GUI interface',
-                           default=0),
+                  BoolVariable('has_debugger_gui',
+                               help='enable debugger GUI interface',
+                               default=0),
 
-                BoolOption('has_debugger_cli',
-                           help='enable debugger command-line interface',
-                           default=0),
+                  BoolVariable('has_debugger_cli',
+                               help='enable debugger command-line interface',
+                               default=0),
 
-                BoolOption('use_tcl',
-                           help='use Tcl as debug command interpreter (only when debugger CLI is enabled)',
-                           default=1),  # only if has_debugger_cli
+                  BoolVariable('use_tcl',
+                               help='use Tcl as debug command interpreter (only when debugger CLI is enabled)',
+                               default=1),  # only if has_debugger_cli
 
-                BoolOption('use_readline',
-                           help='use Readline library for command editing and history (only when debugger CLI is enabled)',
-                           default=1))  # only if has_debugger_cli
+                  BoolVariable('use_readline',
+                               help='use Readline library for command editing and history (only when debugger CLI is enabled)',
+                               default=1))  # only if has_debugger_cli
 
 #-----------------------------------------------------------------------------
 # Cache options

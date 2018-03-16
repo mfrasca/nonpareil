@@ -289,8 +289,6 @@ csim_env = nonpareil_env.Clone()
 if not ming:
     csim_env.Append(CPPDEFINES={'DEFAULT_PATH': build_env['libdir']})
 
-print build_env['target']
-
 if build_env['target'] == 'win32':
     csim_env.Append(CPPDEFINES={'SHAPE_DEFAULT': "false"})
 
