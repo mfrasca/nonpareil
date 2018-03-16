@@ -59,8 +59,8 @@ if cross and ming and build_target_only:
     build_env.Replace(PROGSUFFIX='.exe')
 
 if ming and (build_target_only or not cross):
-    build_env.Append(CPPDEFINES={ 'MINGW': '1',
-                                     'MS_WINDOWS' : '1'})
+    build_env.Append(CPPDEFINES={'MINGW': '1',
+                                 'MS_WINDOWS': '1'})
 
 #-----------------------------------------------------------------------------
 # common components
@@ -267,7 +267,7 @@ for gen in ["nonpareil_title_png",
             "lgoose_png",
             "canada_goose_wav"]:
     nonpareil_objs.append(build_env.Object(target=gen + '.o',
-                                             source='#build/common/' + gen + '.c'))
+                                           source='#build/common/' + gen + '.c'))
 
 nonpareil_env.Append(LIBS='png')
 
@@ -316,11 +316,11 @@ if cross and ming and build_target_only:
     nonpareil_env.Append(LINKFLAGS=['-mwindows'])
 
 nonpareil = nonpareil_env.Program(target='nonpareil',
-                                   source=(nonpareil_objs +
-                                             kml_objs +
-                                             common_objs +
-                                             state_io_objs +
-                                             common_dis_objs))
+                                  source=(nonpareil_objs +
+                                          kml_objs +
+                                          common_objs +
+                                          state_io_objs +
+                                          common_dis_objs))
 
 ##-----------------------------------------------------------------------------
 ## udis
@@ -355,7 +355,7 @@ nonpareil = nonpareil_env.Program(target='nonpareil',
 modutil_srcs = Split("""modutil.c""")
 
 modutil = build_env.Program(target='modutil',
-                             source=modutil_srcs + common_objs)
+                            source=modutil_srcs + common_objs)
 
 #-----------------------------------------------------------------------------
 # genhash
@@ -365,9 +365,9 @@ if build_env['build_target_only'] == 0 and False:
     genhash_srcs = Split("""genhash.c""")
 
     genhash = build_env.Program(target='genhash',
-                                 source=(genhash_srcs +
-                                           kml_objs +
-                                           common_objs))
+                                source=(genhash_srcs +
+                                        kml_objs +
+                                        common_objs))
 
 #-----------------------------------------------------------------------------
 # default targets
@@ -385,8 +385,8 @@ if (not cross) or build_target_only:
 
 if build_env['build_target_only'] == 0:
     native_env.Alias(target='install',
-                      source=native_env.Install(dir=native_env['destdir'] + native_env['bindir'],
-                                                   source=[uasm, nonpareil, modutil]))
+                     source=native_env.Install(dir=native_env['destdir'] + native_env['bindir'],
+                                               source=[uasm, nonpareil, modutil]))
 
 #-----------------------------------------------------------------------------
 # source tarball
