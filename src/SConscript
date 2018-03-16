@@ -39,48 +39,48 @@ pkg_config_cmd += ' --cflags --libs '
 
 sdl_pkg_config_cmd = 'sdl-config --cflags --libs'
 
-build_env.Append (CPPPATH = ['.'])
-build_env.Append (CPPPATH = ['#/build/common'])  # generated includes
-build_env.Append (CCFLAGS = ['-Wall'])
-build_env.Append (YACCFLAGS = [ '-d', '-v' ])
+build_env.Append(CPPPATH = ['.'])
+build_env.Append(CPPPATH = ['#/build/common'])  # generated includes
+build_env.Append(CCFLAGS = ['-Wall'])
+build_env.Append(YACCFLAGS = [ '-d', '-v' ])
 
 if build_env ['debug'] :
-    build_env.Append (CCFLAGS = ['-g'])
+    build_env.Append(CCFLAGS = ['-g'])
 else:
-    build_env.Append (CCFLAGS = ['-O2'])
+    build_env.Append(CCFLAGS = ['-O2'])
 
 if cross and ming and build_target_only:
-    build_env.Replace (CC = '/usr/local/mingw/bin/i586-mingw32msvc-gcc')
-    build_env.Append (CCFLAGS = ['-mms-bitfields'])
-    build_env.Append (CPPPATH = ['/usr/local/gtkwin/include'])  # libpng
-    build_env.Append (CPPPATH = ['/usr/local/gtkwin/SDL-1.2.8/include'])
-    build_env.Append (LIBPATH = ['/usr/local/gtkwin/SDL-1.2.8/lib'])
-    build_env.Append (LIBS = ['libSDL'])
-    build_env.Replace (PROGSUFFIX = '.exe')
+    build_env.Replace(CC = '/usr/local/mingw/bin/i586-mingw32msvc-gcc')
+    build_env.Append(CCFLAGS = ['-mms-bitfields'])
+    build_env.Append(CPPPATH = ['/usr/local/gtkwin/include'])  # libpng
+    build_env.Append(CPPPATH = ['/usr/local/gtkwin/SDL-1.2.8/include'])
+    build_env.Append(LIBPATH = ['/usr/local/gtkwin/SDL-1.2.8/lib'])
+    build_env.Append(LIBS = ['libSDL'])
+    build_env.Replace(PROGSUFFIX = '.exe')
 
 if ming and (build_target_only or not cross):
-    build_env.Append (CPPDEFINES = { 'MINGW': '1',
+    build_env.Append(CPPDEFINES = { 'MINGW': '1',
                                      'MS_WINDOWS' : '1'})
 
 #-----------------------------------------------------------------------------
 # common components
 #-----------------------------------------------------------------------------
 
-common_srcs = Split ("""util.c arch.c""")
+common_srcs = Split("""util.c arch.c""")
 common_objs = [build_env.Object(src) for src in common_srcs]
 
-common_dis_srcs = Split ("""dis_woodstock.c dis_nut.c""")
+common_dis_srcs = Split("""dis_woodstock.c dis_nut.c""")
 common_dis_objs = [build_env.Object(src) for src in common_dis_srcs];
 
-kml_srcs = Split ("""kmll.l kmly.y kml.c""")
+kml_srcs = Split("""kmll.l kmly.y kml.c""")
 kml_objs = [build_env.Object(src) for src in kml_srcs]
 
-state_io_srcs = Split ("""state_write.c state_read.c""")
+state_io_srcs = Split("""state_write.c state_read.c""")
 state_io_objs = [build_env.Object(src) for src in state_io_srcs];
 state_io_packages = "gtk+-2.0 gdk-2.0 gdk-pixbuf-2.0 glib-2.0 libxml-2.0"
 
-release_env = build_env.Copy (CPPDEFINES = { 'NONPAREIL_RELEASE': build_env ['RELEASE']})
-common_objs.append (release_env.Object ('release.c'))
+release_env = build_env.Clone(CPPDEFINES = { 'NONPAREIL_RELEASE': build_env ['RELEASE']})
+common_objs.append(release_env.Object('release.c'))
 
 build_env.ParseConfig(pkg_config_cmd + state_io_packages)
 
@@ -89,27 +89,27 @@ build_env.ParseConfig(pkg_config_cmd + state_io_packages)
 #-----------------------------------------------------------------------------
 
 if build_env ['build_target_only'] == 0:
-    str2png_env = build_env.Copy ()
+    str2png_env = build_env.Clone()
 
-    str2png_env.Append (CPPDEFINES = {'DEFAULT_PATH': 'image'})
+    str2png_env.Append(CPPDEFINES = {'DEFAULT_PATH': 'image'})
 
-    str2png_srcs = Split ("""str2png.c""")
+    str2png_srcs = Split("""str2png.c""")
 
-    str2png = str2png_env.Program (target = 'str2png',
+    str2png = str2png_env.Program(target = 'str2png',
                                    source = (str2png_srcs +
                                              kml_objs +
                                              common_objs))
 
-    def Str2PNG_Emitter (target, source, env):
-        env.Depends (target, "$STR2PNG")
+    def Str2PNG_Emitter(target, source, env):
+        env.Depends(target, "$STR2PNG")
         return (target, source)
 
-    Str2PNG = Builder (action = "$STR2PNGCOM",
+    Str2PNG = Builder(action = "$STR2PNGCOM",
                        suffix = '.png',
                        src_suffix = '.kml',
                        emitter = Str2PNG_Emitter)
 
-    native_env.Append (BUILDERS = { 'STR2PNG': Str2PNG },
+    native_env.Append(BUILDERS = { 'STR2PNG': Str2PNG },
                        STR2PNG = str2png,
                        STR2PNGCOM = "$STR2PNG $STR2PNG_OPTS $SOURCE \"$STR2PNG_STRING\" $TARGET")
 
@@ -118,45 +118,45 @@ if build_env ['build_target_only'] == 0:
 #-----------------------------------------------------------------------------
 
 if build_env ['build_target_only'] == 0:
-    bin2c_srcs = Split ("""bin2c.c""")
+    bin2c_srcs = Split("""bin2c.c""")
 
-    bin2c = build_env.Program (target = 'bin2c',
+    bin2c = build_env.Program(target = 'bin2c',
                                source = (bin2c_srcs +
                                          common_objs))
-    
-    def basename (fullpath):
-        return os.path.splitext (os.path.basename (fullpath)) [0]
 
-    def PNG2C_Generator (source, target, env, for_signature):
+    def basename(fullpath):
+        return os.path.splitext(os.path.basename(fullpath)) [0]
+
+    def PNG2C_Generator(source, target, env, for_signature):
         return '%s %s %s -c %s -h %s' % (bin2c [0],
                                          source [0],
-                                         basename (str(source [0])) + '_png',
+                                         basename(str(source [0])) + '_png',
                                          target [0],
                                          target [1])
 
-    def BIN2C_Emitter (target, source, env):
-        target.append (os.path.splitext (str (target [0])) [0] + '.h')
-        env.Depends (target, "$BIN2C")
+    def BIN2C_Emitter(target, source, env):
+        target.append(os.path.splitext(str(target [0])) [0] + '.h')
+        env.Depends(target, "$BIN2C")
         return (target, source)
 
-    PNG2C = Builder (generator = PNG2C_Generator,
+    PNG2C = Builder(generator = PNG2C_Generator,
                      suffix = '_png.c',
                      src_suffix = '.png',
                      emitter = BIN2C_Emitter)
 
-    def WAV2C_Generator (source, target, env, for_signature):
+    def WAV2C_Generator(source, target, env, for_signature):
         return '%s %s %s -c %s -h %s' % (bin2c [0],
                                          source [0],
-                                         basename (str(source [0])) + '_wav',
+                                         basename(str(source [0])) + '_wav',
                                          target [0],
                                          target [1])
 
-    WAV2C = Builder (generator = WAV2C_Generator,
+    WAV2C = Builder(generator = WAV2C_Generator,
                      suffix = '_wav.c',
                      src_suffix = '.wav',
                      emitter = BIN2C_Emitter)
 
-    native_env.Append (BUILDERS = { 'PNG2C': PNG2C,
+    native_env.Append(BUILDERS = { 'PNG2C': PNG2C,
                                     'WAV2C': WAV2C},
                        BIN2C = bin2c)
 
@@ -165,28 +165,28 @@ if build_env ['build_target_only'] == 0:
 # uasm
 #-----------------------------------------------------------------------------
 
-uasm_srcs = Split ("""asm.c symtab.c
-            	      asml.l asmy.y
+uasm_srcs = Split("""asm.c symtab.c
+                      asml.l asmy.y
                       casml.l casmy.y
                       wasml.l wasmy.y""")
 
-uasm = build_env.Program (target = 'uasm',
+uasm = build_env.Program(target = 'uasm',
                           source = uasm_srcs + common_objs)
 
 if build_env ['build_target_only'] == 0:
     import os.path
 
-    def AssembleEmitter (target, source, env):
-        target.append (os.path.splitext (str (target [0])) [0] + '.lst')
-        env.Depends (target, "$UASM")
+    def AssembleEmitter(target, source, env):
+        target.append(os.path.splitext(str(target [0])) [0] + '.lst')
+        env.Depends(target, "$UASM")
         return (target, source)
 
-    Assemble = Builder (action = "$UASMCOM",
+    Assemble = Builder(action = "$UASMCOM",
                         suffix = '.obj',
                         src_suffix = '.asm',
                         emitter = AssembleEmitter)
 
-    native_env.Append (BUILDERS = { 'Assemble': Assemble },
+    native_env.Append(BUILDERS = { 'Assemble': Assemble },
                        UASM = uasm,
                        UASMCOM = "$UASM $UASMFLAGS $SOURCE -o $TARGET -l ${TARGETS[1]}")
 
@@ -196,31 +196,31 @@ if build_env ['build_target_only'] == 0:
 #-----------------------------------------------------------------------------
 
 if not build_target_only:
-    title_env = native_env.Copy (STR2PNG_STRING = 'NONPAREIL',
+    title_env = native_env.Clone(STR2PNG_STRING = 'NONPAREIL',
                                  STR2PNG_OPTS = '-x 40 -y 44 -m 10')
 
-    title_env.STR2PNG (target = 'nonpareil_title',
+    title_env.STR2PNG(target = 'nonpareil_title',
                        source = build_env ['KML_41CV'])
 
-    native_env.PNG2C (target = '#build/common/nonpareil_title_png.c',
+    native_env.PNG2C(target = '#build/common/nonpareil_title_png.c',
                       source = 'nonpareil_title.png')
-            
-    rgoose_env = native_env.Copy (STR2PNG_STRING = '.',
+
+    rgoose_env = native_env.Clone(STR2PNG_STRING = '.',
                                   STR2PNG_OPTS = '-x 40 -y 44')
 
-    rgoose_env.STR2PNG (target = 'rgoose',
+    rgoose_env.STR2PNG(target = 'rgoose',
                         source = build_env ['KML_41CV'])
 
-    native_env.PNG2C (target = '#build/common/rgoose_png.c',
+    native_env.PNG2C(target = '#build/common/rgoose_png.c',
                       source = 'rgoose.png')
-            
-    lgoose_env = native_env.Copy (STR2PNG_STRING = ',',
+
+    lgoose_env = native_env.Clone(STR2PNG_STRING = ',',
                                   STR2PNG_OPTS = '-x 40 -y 44')
 
-    lgoose_env.STR2PNG (target = 'lgoose',
+    lgoose_env.STR2PNG(target = 'lgoose',
                         source = build_env ['KML_41CV'])
 
-    native_env.PNG2C (target = '#build/common/lgoose_png.c',
+    native_env.PNG2C(target = '#build/common/lgoose_png.c',
                       source = 'lgoose.png')
 
 #-----------------------------------------------------------------------------
@@ -228,16 +228,16 @@ if not build_target_only:
 #-----------------------------------------------------------------------------
 
 if not build_target_only:
-    native_env.WAV2C (target = '#build/common/canada_goose_wav.c',
+    native_env.WAV2C(target = '#build/common/canada_goose_wav.c',
                       source = native_env ['SND_GOOSE'])
 
 #-----------------------------------------------------------------------------
 # nonpareil
 #-----------------------------------------------------------------------------
 
-nonpareil_env = build_env.Copy ()
+nonpareil_env = build_env.Clone()
 
-nonpareil_srcs = Split ("""proc.c glib_async_queue_source.c
+nonpareil_srcs = Split("""proc.c glib_async_queue_source.c
                            about.c goose.c pixbuf_util.c
                            calc_chooser.c
                            sound.c
@@ -251,120 +251,122 @@ nonpareil_srcs = Split ("""proc.c glib_async_queue_source.c
                            voyager_lcd.c
                            mod1_file.c""")
 
-nonpareil_csim_srcs = Split ("""csim.c""")
+nonpareil_csim_srcs = Split("""csim.c""")
 
-nonpareil_debugger_gui_srcs = Split ("""debugger_gui.c""")
+nonpareil_debugger_gui_srcs = Split("""debugger_gui.c""")
 
-nonpareil_debugger_cli_srcs = Split ("""debugger_cli.c""")
+nonpareil_debugger_cli_srcs = Split("""debugger_cli.c""")
 
 nonpareil_packages = "gtk+-2.0 gdk-2.0 gdk-pixbuf-2.0 glib-2.0 gthread-2.0"
 
 nonpareil_objs = []
 
-# compile generated sources (platform-specific)
+# compile generated sources(platform-specific)
 for gen in ["nonpareil_title_png",
             "rgoose_png",
             "lgoose_png",
             "canada_goose_wav"]:
-    nonpareil_objs.append (build_env.Object (target = gen + '.o',
+    nonpareil_objs.append(build_env.Object(target = gen + '.o',
                                              source = '#build/common/' + gen + '.c'))
 
-nonpareil_env.Append (LIBS = 'png')
+nonpareil_env.Append(LIBS = 'png')
 
 if build_env ['has_debugger_gui'] or build_env ['has_debugger_cli']:
-    nonpareil_env.Append (CPPDEFINES = {'HAS_DEBUGGER': 1})
+    nonpareil_env.Append(CPPDEFINES = {'HAS_DEBUGGER': 1})
 
 if build_env ['has_debugger_cli']:
     nonpareil_packages += ' vte'
-    nonpareil_env.Append (LIBS = 'util')  # for PTY support
+    nonpareil_env.Append(LIBS = 'util')  # for PTY support
 
 if build_env ['has_debugger_gui']:
-    nonpareil_objs.append (nonpareil_env.Object (nonpareil_debugger_gui_srcs))
+    nonpareil_objs.append(nonpareil_env.Object(nonpareil_debugger_gui_srcs))
 
-nonpareil_env.ParseConfig (pkg_config_cmd + nonpareil_packages)
+nonpareil_env.ParseConfig(pkg_config_cmd + nonpareil_packages)
 if (not ming) or (cross and not build_target_only):
-    nonpareil_env.ParseConfig (sdl_pkg_config_cmd)
+    nonpareil_env.ParseConfig(sdl_pkg_config_cmd)
 
-csim_env = nonpareil_env.Copy ()
+csim_env = nonpareil_env.Clone()
 if not ming:
-    csim_env.Append (CPPDEFINES = {'DEFAULT_PATH': build_env ['libdir']})
+    csim_env.Append(CPPDEFINES = {'DEFAULT_PATH': build_env ['libdir']})
+
+print build_env['target']
 
 if build_env ['target'] == 'win32':
-    csim_env.Append (CPPDEFINES = {'SHAPE_DEFAULT': "false"})
+    csim_env.Append(CPPDEFINES = {'SHAPE_DEFAULT': "false"})
 
 if build_env ['has_debugger_gui']:
-    csim_env.Append (CPPDEFINES = {'HAS_DEBUGGER_GUI': 1})
+    csim_env.Append(CPPDEFINES = {'HAS_DEBUGGER_GUI': 1})
 
 if build_env ['has_debugger_cli']:
-    csim_env.Append (CPPDEFINES = {'HAS_DEBUGGER_CLI': 1})
-    debugger_cli_env = csim_env.Copy ()
+    csim_env.Append(CPPDEFINES = {'HAS_DEBUGGER_CLI': 1})
+    debugger_cli_env = csim_env.Clone()
     if build_env ['use_tcl']:
-        debugger_cli_env.Append (CPPDEFINES = {'USE_TCL': 1})
-        nonpareil_env.Append (LIBS = 'tcl')
+        debugger_cli_env.Append(CPPDEFINES = {'USE_TCL': 1})
+        nonpareil_env.Append(LIBS = 'tcl')
     if build_env ['use_readline']:
-        debugger_cli_env.Append (CPPDEFINES = {'USE_READLINE': 1})
-        nonpareil_env.Append (LIBS = 'readline')
-    nonpareil_objs.append (debugger_cli_env.Object (nonpareil_debugger_cli_srcs))
+        debugger_cli_env.Append(CPPDEFINES = {'USE_READLINE': 1})
+        nonpareil_env.Append(LIBS = 'readline')
+    nonpareil_objs.append(debugger_cli_env.Object(nonpareil_debugger_cli_srcs))
 
 for src in nonpareil_csim_srcs:
-    nonpareil_objs.append (csim_env.Object (src))
+    nonpareil_objs.append(csim_env.Object(src))
 
 for src in nonpareil_srcs:
-    nonpareil_objs.append (nonpareil_env.Object (src))
+    nonpareil_objs.append(nonpareil_env.Object(src))
 
 if cross and ming and build_target_only:
-    nonpareil_env.Append (LINKFLAGS = ['-mwindows'])
+    nonpareil_env.Append(LINKFLAGS = ['-mwindows'])
 
-nonpareil = nonpareil_env.Program (target = 'nonpareil',
+nonpareil = nonpareil_env.Program(target = 'nonpareil',
                                    source = (nonpareil_objs +
                                              kml_objs +
                                              common_objs +
                                              state_io_objs +
                                              common_dis_objs))
 
-#-----------------------------------------------------------------------------
-# udis
-#-----------------------------------------------------------------------------
-
-udis_env = build_env.Copy ()
-
-udis_srcs = Split ("""dis.c""")
-
-udis = udis_env.Program (target = 'udis',
-                         source = common_objs + common_dis_objs + udis_srcs)
-
-#-----------------------------------------------------------------------------
-# nsim_conv
-#-----------------------------------------------------------------------------
-
-nsim_conv_env = build_env.Copy ()
-
-nsim_conv_srcs = Split ("""nsim_conv.c
-	                   state_read_nsim.c state_write_nsim.c""")
-
-# nsim_conv_packages = "libxml-2.0"
-# nsim_conv_env.ParseConfig(pkg_config_cmd + nsim_conv_packages)
-
-nsim_conv = nsim_conv_env.Program (target = 'nsim_conv',
-                                   source = common_objs + state_io_objs + nsim_conv_srcs)
+##-----------------------------------------------------------------------------
+## udis
+##-----------------------------------------------------------------------------
+#
+#udis_env = build_env.Clone()
+#
+#udis_srcs = Split("""dis.c""")
+#
+#udis = udis_env.Program(target = 'udis',
+#                 source = common_objs + common_dis_objs + udis_srcs)
+#
+##-----------------------------------------------------------------------------
+## nsim_conv
+##-----------------------------------------------------------------------------
+#
+#nsim_conv_env = build_env.Clone()
+#
+#nsim_conv_srcs = Split("""nsim_conv.c
+#                           state_read_nsim.c state_write_nsim.c""")
+#
+## nsim_conv_packages = "libxml-2.0"
+## nsim_conv_env.ParseConfig(pkg_config_cmd + nsim_conv_packages)
+#
+#nsim_conv = nsim_conv_env.Program(target = 'nsim_conv',
+#                                   source = common_objs + state_io_objs + nsim_conv_srcs)
 
 #-----------------------------------------------------------------------------
 # modutil
 #-----------------------------------------------------------------------------
 
-modutil_srcs = Split ("""modutil.c""")
+modutil_srcs = Split("""modutil.c""")
 
-modutil = build_env.Program (target = 'modutil',
+modutil = build_env.Program(target = 'modutil',
                              source = modutil_srcs + common_objs)
 
 #-----------------------------------------------------------------------------
 # genhash
 #-----------------------------------------------------------------------------
 
-if build_env ['build_target_only'] == 0:
-    genhash_srcs = Split ("""genhash.c""")
+if build_env ['build_target_only'] == 0 and False:
+    genhash_srcs = Split("""genhash.c""")
 
-    genhash = build_env.Program (target = 'genhash',
+    genhash = build_env.Program(target = 'genhash',
                                  source = (genhash_srcs +
                                            kml_objs +
                                            common_objs))
@@ -377,15 +379,15 @@ default_targets = [nonpareil, uasm, modutil]
 # omit udis, nsim_conv for now
 
 if (not cross) or build_target_only:
-    Default (default_targets)
+    Default(default_targets)
     
 #-----------------------------------------------------------------------------
 # install
 #-----------------------------------------------------------------------------
 
 if build_env ['build_target_only'] == 0:
-    native_env.Alias (target = 'install',
-                      source = native_env.Install (dir = native_env ['destdir'] + native_env ['bindir'],
+    native_env.Alias(target = 'install',
+                      source = native_env.Install(dir = native_env ['destdir'] + native_env ['bindir'],
                                                    source = [uasm, nonpareil, modutil]))
 
 #-----------------------------------------------------------------------------
@@ -393,7 +395,7 @@ if build_env ['build_target_only'] == 0:
 #-----------------------------------------------------------------------------
 
 if build_env ['build_target_only'] == 0:
-    headers = Split ("""util.h
+    headers = Split("""util.h
                         calc_chooser.h
                         arch.h model.h platform.h kml.h
                         proc.h proc_int.h glib_async_queue_source.h
@@ -410,9 +412,9 @@ if build_env ['build_target_only'] == 0:
                         nsim_conv.h
                         mod1_file.h""")
 
-    misc = Split ("""SConscript ChangeLog release.c""")
+    misc = Split("""SConscript ChangeLog release.c""")
 
-    dist_files = (misc + headers +
+    dist_files =(misc + headers +
                   kml_srcs + common_srcs + common_dis_srcs +
                   state_io_srcs + uasm_srcs +
                   nonpareil_srcs + nonpareil_csim_srcs +
@@ -422,14 +424,14 @@ if build_env ['build_target_only'] == 0:
                   str2png_srcs +
                   bin2c_srcs)
 
-    native_env.Distribute (source_release_dir, dist_files)
+    native_env.Distribute(source_release_dir, dist_files)
 
-    native_env.Distribute (snapshot_dir, dist_files)
+    native_env.Distribute(snapshot_dir, dist_files)
 
 #-----------------------------------------------------------------------------
 # Windows distribution ZIP file
 #-----------------------------------------------------------------------------
 
 if ming and (build_target_only or not cross):
-    Import ('win32_bin_dist_dir')
-    Install (win32_bin_dist_dir, default_targets)
+    Import('win32_bin_dist_dir')
+    Install(win32_bin_dist_dir, default_targets)
